@@ -123,7 +123,6 @@ def doTask():
          if int(user_choice2)==2:
               if isVideoCaptured:
                 imgFile=selectFrame()
-                print(imgFile)
                 noise_img = sp.sp_noise(imgFile,0.05)
                 cv2.imwrite("noiseImage.png",noise_img)
                 fin=sp.medianFilter(noise_img)
