@@ -1,6 +1,6 @@
 # VideoAnalytics
 
-## Project 1 - Object detection and Salt and Pepper Noise removal using median filter.(Implemented Median Filter)
+### Project 1 - Object detection and Salt and Pepper Noise removal by implementing median filter.
 
 
 ## Tools:
