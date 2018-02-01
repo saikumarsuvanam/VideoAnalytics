@@ -14,48 +14,52 @@ def videcapture_objectdetect():
     """
     video = cv2.VideoCapture(0);
     # Number of frames to capture
-    num_frames = 120;
+    
     frame_width = int(video.get(3))
     frame_height = int(video.get(4))
 
     # Define the codec and create VideoWriter object.The output is stored in 'outpy.avi' file.
     out2 = cv2.VideoWriter('objectdetected.avi',cv2.VideoWriter_fourcc('M','J','P','G'), 10,(frame_width,frame_height))
     out1 = cv2.VideoWriter('capturedvideo.avi',cv2.VideoWriter_fourcc('M','J','P','G'),10, (frame_width,frame_height))
-    print ("Capturing {0} frames".format(num_frames))
+
  
     # Start time
     start = time.time()
     framecounter=0;
+    totalframes=200
    
     # Grab a few frames
     while(True):
   
         ret, frame = video.read()
         if ret == True: 
-        
-            
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            # 0-10 hue
-            redmin1 = np.array([0, 100, 100])
-            redmax1 = np.array([10, 256, 256])
-            red1 = cv2.inRange(hsv, redmin1, redmax1)
-            
-            # 170-180 hue
-            redmin2 = np.array([160, 100, 100])
-            redmax2 = np.array([180, 256, 256])
-            red2 = cv2.inRange(hsv, redmin2, redmax2)
-            
-            mask = red1 + red2
-
+            redmin1 = np.array([27,120,52])
+            redmin2 = np.array([179,255,185])
+                
+            mask = cv2.inRange(hsv, redmin1, redmin2)
             res = cv2.bitwise_and(frame,frame, mask= mask)
             
-            cv2.imshow('frame',frame)
-            cv2.imshow('mask',mask)
+            kernel = np.ones((5,5),np.uint8)
+            erosion = cv2.erode(mask,kernel,iterations = 1)
+            dilation = cv2.dilate(mask,kernel,iterations = 1)
+            
+            cv2.imshow('Original',frame)
+            cv2.imshow('Mask',mask)
+            cv2.imshow('Erosion',erosion)
+            cv2.imshow('Dilation',dilation)
+            cv2.imshow('res',res)
+            
+            cv2.imwrite('grabbedmask.png',mask)
+            
+            
+            cv2.imwrite('grabbedresult.png',res)
+            
             out1.write(frame)
             out2.write(res)
-            cv2.imshow('res',res)
+            
             framecounter=framecounter+1
-            if framecounter ==10:
+            if framecounter ==totalframes:
                 break
             # Press Q on keyboard to stop recording
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -72,11 +76,11 @@ def videcapture_objectdetect():
  
     # Time elapsed
     seconds = end - start
-    print ("Time taken : {0} seconds".format(seconds))
+    print ("Total Time taken : {0} seconds".format(seconds))
  
     # Calculate frames per second
-    fps  = num_frames / seconds;
-    print ("Estimated frames per second : {0}".format(fps))
+    fps  = totalframes / seconds;
+    print ("Total frames per second : {0}".format(fps))
  
     # When everything done, release the video capture and video write objects
     video.release()
